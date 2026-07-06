@@ -119,7 +119,3 @@ docker compose down
 - [ ] Move from SQLite to PostgreSQL for production-readiness
 - [ ] Persistent Volume Claims for stateful storage in Kubernetes
 - [ ] Terraform for infrastructure provisioning
-
-## Acknowledgements
-
-Architecture and containerization approach inspired by [TrainWithShubham's django-notes-app](https://github.com/LondheShubham153/django-notes-app).
