@@ -1,0 +1,27 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: notes-app-frontend
+  namespace: notes-app-ns
+  labels:
+    app: notes-app-frontend
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notes-app-frontend
+
+  template:
+    metadata:
+      name: notes-app-frontend
+      labels:
+        app: notes-app-frontend
+
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: notes-app-frontend-container
+          image: harshal345/notes-app_frontend
+          ports:
+            - containerPort: 5173

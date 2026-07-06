@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: notes-app-backend-service
+  namespace: notes-app-ns
+  labels:
+    app: notes-app-backend-service
+
+spec:
+  selector:
+    app: notes-app-backend
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP

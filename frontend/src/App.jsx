@@ -5,6 +5,7 @@ function App() {
   const [notes, setNotes] = useState([]);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const API_URL = 'http://127.0.0.1:8000/api/notes/';
 
@@ -25,13 +26,14 @@ function App() {
   const createNote = async (e) => {
     e.preventDefault();
     if (!title && !body) return;
+    setLoading(true);
 
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          title, 
+        body: JSON.stringify({
+          title,
           body,
           text_body: body,
           is_pinned: false,
@@ -46,6 +48,8 @@ function App() {
       }
     } catch (error) {
       console.error('Error creating note:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,44 +62,74 @@ function App() {
     }
   };
 
+  const formatIndex = (num) => String(num).padStart(3, '0');
+
   return (
-    <div className="App" style={{ padding: '40px', fontFamily: 'sans-serif' }}>
-      <h1>NoteVault - React + Django</h1>
-      
-      <form onSubmit={createNote} style={{ marginBottom: '30px', display: 'flex', gap: '10px' }}>
-        <input 
-          type="text" 
-          placeholder="Note Title..." 
-          value={title} 
+    <div className="vault">
+      <header className="vault-header">
+        <div className="vault-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="36" height="36">
+            <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" strokeWidth="2" />
+            <circle cx="24" cy="24" r="4" fill="currentColor" />
+            <line x1="24" y1="6" x2="24" y2="12" stroke="currentColor" strokeWidth="2" />
+            <line x1="24" y1="36" x2="24" y2="42" stroke="currentColor" strokeWidth="2" />
+            <line x1="6" y1="24" x2="12" y2="24" stroke="currentColor" strokeWidth="2" />
+            <line x1="36" y1="24" x2="42" y2="24" stroke="currentColor" strokeWidth="2" />
+          </svg>
+        </div>
+        <div>
+          <h1>NoteVault</h1>
+          <p className="vault-sub">Secured records &middot; React + Django</p>
+        </div>
+        <div className="vault-count">
+          <span className="vault-count-num">{formatIndex(notes.length)}</span>
+          <span className="vault-count-label">filed</span>
+        </div>
+      </header>
+
+      <form onSubmit={createNote} className="deposit-form">
+        <input
+          type="text"
+          placeholder="Title this record..."
+          value={title}
           onChange={(e) => setTitle(e.target.value)}
-          style={{ padding: '10px' }}
+          className="deposit-title"
         />
-        <input 
-          type="text" 
-          placeholder="Note Body..." 
-          value={body} 
+        <input
+          type="text"
+          placeholder="What do you want to remember?"
+          value={body}
           onChange={(e) => setBody(e.target.value)}
-          style={{ padding: '10px', flex: 1 }}
+          className="deposit-body"
         />
-        <button type="submit" style={{ padding: '10px 20px', background: '#6366f1', color: '#fff', border: 'none' }}>
-          Add Note
+        <button type="submit" className="deposit-btn" disabled={loading}>
+          {loading ? 'Filing…' : 'File it away'}
         </button>
       </form>
 
-      <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))' }}>
-        {notes.map(note => (
-          <div key={note.id} style={{ padding: '20px', background: '#1e2535', borderRadius: '12px', color: '#fff' }}>
-            <h3>{note.title || 'Untitled'}</h3>
-            <p style={{ color: '#94a3b8' }}>{note.body}</p>
-            <button 
-              onClick={() => deleteNote(note.id)}
-              style={{ marginTop: '10px', padding: '5px 10px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '4px' }}
-            >
-              Delete
-            </button>
-          </div>
-        ))}
-      </div>
+      {notes.length === 0 ? (
+        <div className="empty-vault">
+          <p>The vault is empty.</p>
+          <span>Records you file will show up here.</span>
+        </div>
+      ) : (
+        <div className="record-grid">
+          {notes.map((note, i) => (
+            <article key={note.id} className="record-card">
+              <div className="record-tab">{formatIndex(i + 1)}</div>
+              <h3>{note.title || 'Untitled record'}</h3>
+              <p>{note.body}</p>
+              <button
+                onClick={() => deleteNote(note.id)}
+                className="record-delete"
+                aria-label={`Delete ${note.title || 'note'}`}
+              >
+                Shred
+              </button>
+            </article>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
