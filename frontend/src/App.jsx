@@ -7,7 +7,7 @@ function App() {
   const [body, setBody] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const API_URL = 'http://127.0.0.1:8000/api/notes/';
+  const API_URL = '/api/notes/';
 
   useEffect(() => {
     fetchNotes();
