@@ -62,8 +62,6 @@ docker compose up --build
 
 Database migrations run automatically on backend container startup, against a PostgreSQL container defined in `docker-compose.yml`. Data persists across restarts via a named Docker volume.
 
-> **Known limitation:** the frontend calls the API via a relative path (`/api/notes/`), which is designed to work behind the Kubernetes Ingress setup below. Docker Compose has no equivalent reverse proxy, so requests from the frontend container currently don't reach the backend when running via Compose alone. **Kubernetes (below) is the primary, fully working way to run this project end-to-end.** A reverse proxy container (NGINX) for Compose parity is on the roadmap.
-
 To stop:
 ```bash
 docker compose down
