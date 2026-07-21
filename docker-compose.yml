@@ -1,9 +1,19 @@
+version: "3.9"
+
 services:
   backend:
     build: ./backend
     container_name: notes-backend
+    environment:
+      - DB_NAME=${DATABASE_DB}
+      - DB_USER=${DATABASE_USER}
+      - DB_PASSWORD=${DATABASE_PASSWORD}
+      - DB_HOST=db
+      - DB_PORT=5432
     ports:
       - "8000:8000"
+    depends_on:
+      - db
     volumes:
       - ./backend:/app
 
@@ -15,14 +25,17 @@ services:
     depends_on:
       - backend
 
-  backend:
-    build: ./backend
-    container_name: notes-backend
-    ports:
-      - "8000:8000"
+  db:
+    image: postgres:16-alpine
+    container_name: "db"
+    environment:
+      - POSTGRES_DB=${DATABASE_DB}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
     volumes:
-      - ./backend:/app
-      - notes_db:/app/data  
+      - notes_db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
 volumes:
   notes_db:

@@ -1,0 +1,55 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: postgresql-statefulset
+  namespace: notes-app-ns
+
+spec:
+  serviceName: postgresql-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresql
+
+  template:
+    metadata:
+      name: postgresql
+      labels:
+        app: postgresql
+
+    spec:
+      containers:
+        - name: postgresql-container
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgre-secret
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgre-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgre-secret
+                  key: POSTGRES_PASSWORD
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: postgresql-data
+              mountPath: /var/lib/postgresql/data
+
+  volumeClaimTemplates:
+  - metadata:
+      name: postgresql-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests: 
+          storage: 512Mi
