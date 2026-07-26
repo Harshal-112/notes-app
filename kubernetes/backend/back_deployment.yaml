@@ -27,6 +27,12 @@ spec:
             - containerPort: 8000
           imagePullPolicy: Always
           env:
+            - name: DEBUG
+              value: "False"
+            - name: ALLOWED_HOSTS
+              value: "localhost,127.0.0.1"
+            - name: CORS_ALLOWED_ORIGINS
+              value: "http://localhost"
             - name: DB_HOST
               value: postgresql-service
             - name: DB_PORT
@@ -51,3 +57,30 @@ spec:
                 secretKeyRef:
                   name: postgre-secret
                   key: SECRET_KEY
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          readinessProbe:
+            httpGet:
+              path: /api/notes/
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/notes/
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
