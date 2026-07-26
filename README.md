@@ -153,5 +153,5 @@ docker compose down
 - [x] Add Ingress for single-entrypoint routing (eliminate dual port-forwarding)
 - [x] Move from SQLite to PostgreSQL for production-readiness
 - [x] Persistent Volume Claims for stateful storage in Kubernetes
-- [ ] CI/CD pipeline via GitHub Actions
+- [x] CI/CD pipeline via GitHub Actions
 - [ ] Terraform for infrastructure provisioning
