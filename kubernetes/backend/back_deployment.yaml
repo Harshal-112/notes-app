@@ -46,3 +46,8 @@ spec:
                 secretKeyRef:
                   name: postgre-secret
                   key: POSTGRES_PASSWORD
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: postgre-secret
+                  key: SECRET_KEY
